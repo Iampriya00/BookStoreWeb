@@ -1,14 +1,7 @@
 import * as React from "react";
 import styles from "@/components/core/masterCarousel/slider.module.css";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -31,7 +24,9 @@ export default function Slider() {
             <div className="p-1">
               <Card className="rounded-none">
                 <CardHeader className={styles.cardImage}>
-                  <Skeleton className="h-[125px] w-full rounded-none" />
+                  <Skeleton className="h-[125px] w-full rounded-none flex justify-center items-center text-xl">
+                    Images {index + 1}
+                  </Skeleton>
                 </CardHeader>
                 <CardDescription className="p-3">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
