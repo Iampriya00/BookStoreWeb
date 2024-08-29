@@ -1,0 +1,10 @@
+.footer{
+    @apply bg-white dark:bg-gray-900
+}
+
+.footerCopy{
+    @apply  flex justify-center content-center bg-black py-5 text-gray-50
+}
+.icons{
+    @apply mt-[6px] mr-[10px]
+}
