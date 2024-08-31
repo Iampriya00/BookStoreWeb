@@ -1,6 +1,7 @@
 const data = [
   { item: "Home", path: "/" },
   { item: "About", path: "/about" },
-  { item: "Service", path: "/sevice" },
+  { item: "Service", path: "/service" },
+  { item: "Contact", path: "/contact" },
 ];
 export default data;

@@ -20,7 +20,7 @@ export default function Slider() {
     >
       <CarouselContent>
         {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+          <CarouselItem key={index} className="py-16 md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card className="rounded-none">
                 <CardHeader className={styles.cardImage}>
