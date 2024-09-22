@@ -1,10 +1,12 @@
 import { Exclude } from 'class-transformer';
+import { Category } from 'src/category/entities/category.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -29,6 +31,9 @@ export class Book {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Category, (category) => category.bookLists)
+  Category: Category;
 
   constructor(partial: Partial<Book>) {
     Object.assign(this, partial);
