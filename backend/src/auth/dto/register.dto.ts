@@ -1,16 +1,12 @@
-import { Role } from '@/enums/role.enum';
-import { Roles } from './../../decorators/roles.decorator';
-
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsString,
+  IsStrongPassword,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -21,15 +17,13 @@ export class CreateUserDto {
   @ApiProperty()
   email: string;
 
-  @IsOptional()
-  @IsString()
-  phone_no?: string;
-
-  @IsString()
-  @IsNotEmpty()
+  @IsStrongPassword({
+    minLength: 8,
+    minLowercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+    minUppercase: 1,
+  })
   @ApiProperty()
   password: string;
-
-  @IsEnum(Role)
-  role?: Role;
 }

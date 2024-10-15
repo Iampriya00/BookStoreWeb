@@ -10,8 +10,10 @@ import {
 import { BookListService } from './book-list.service';
 import { CreateBookListDto } from './dto/create-book-list.dto';
 import { UpdateBookListDto } from './dto/update-book-list.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('book-list')
+@ApiTags('book-list')
 export class BookListController {
   constructor(private readonly bookListService: BookListService) {}
 
