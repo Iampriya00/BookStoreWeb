@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -32,7 +33,7 @@ export class Book {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Category, (category) => category.bookLists)
+  @ManyToMany(() => Category, (category) => category.bookLists)
   Category: Category;
 
   constructor(partial: Partial<Book>) {

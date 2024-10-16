@@ -1,7 +1,19 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
+import { LocalAuthGuard } from './guard/local.guard';
+import { LoginDto } from './dto/login.dto';
+import { User } from '@/users/entities/user.entity';
+import { JwtGuard } from './guard/jwt.guard';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -17,28 +29,23 @@ export class AuthController {
   async registerAdmin(@Body() registerDto: RegisterDto) {
     return await this.authService.registerAdmin(registerDto);
   }
-  //   @Post('registerUser')
-  //   async registerUser(@Body() registerDto: RegisterDto) {
-  //     return await this.authService.crtRegularUser(registerDto);
-  //   }
+  @HttpCode(200)
+  @UseGuards(LocalAuthGuard)
+  @ApiBody({
+    type: LoginDto,
+  })
+  @Post('login')
+  async login(@Req() req: Request & { user: User }) {
+    return req.user;
+  }
 
-  //   @HttpCode(200)
-  //   @UseGuards(LocalAuthGuard)
-  //   @ApiBody({
-  //     type: LoginDto,
-  //   })
-  //   @Post('login')
-  //   async login(@Req() req) {
-  //     return req.user;
-  //   }
-
-  //   @HttpCode(200)
-  //   @ApiBearerAuth()
-  //   @UseGuards(JwtGuard)
-  //   @Get('getUser')
-  //   async getUser(@GetUser() user: User) {
-  //     return user;
-  //   }
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @Get('getUser')
+  async getUser() {
+    return 'user';
+  }
 
   //   @HttpCode(200)
   //   @Get('getAllUser')

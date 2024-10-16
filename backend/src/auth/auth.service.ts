@@ -3,8 +3,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from './dto/register.dto';
 import { PostgresErrorCodes } from '@/enums/errorCodes.enum';
-import { hashSync } from 'bcryptjs';
+import { compareSync, hashSync } from 'bcryptjs';
 import { Role } from '@/enums/role.enum';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +14,7 @@ export class AuthService {
     // private schedulerRegistry: SchedulerRegistry,
     private configService: ConfigService,
     private usersService: UsersService,
-    // private jwtService: JwtService,
+    private jwtService: JwtService,
   ) {}
   async register(registerDto: RegisterDto) {
     const password = hashSync(registerDto.password);
@@ -57,47 +59,26 @@ export class AuthService {
       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  //   async crtRegularUser(registerDto: RegisterDto) {
-  //     const password = hashSync(registerDto.password);
 
-  //     try {
-  //       const createdUser = await this.usersService.create({
-  //         ...registerDto,
-  //         password,
-  //         roles: Role.User,
-  //       });
+  async login(dto: LoginDto) {
+    const user = await this.usersService.findByEmail(dto.email);
 
-  //       return createdUser;
-  //     } catch (error: any) {
-  //       if (error?.code === PostgresErrorCode.UniqueViolation) {
-  //         throw new HttpException(
-  //           'A user with that username and/or email already exists.',
-  //           HttpStatus.UNAUTHORIZED,
-  //         );
-  //       }
+    await this.verifyPassword(dto.password, user.password);
 
-  //       throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
-  //     }
-  //   }
-  //   async login(dto: LoginDto) {
-  //     const user = await this.usersService.findByEmail(dto.email);
+    const accessToken = await this.signToken(user.id, user.email);
 
-  //     await this.verifyPassword(dto.password, user.password);
+    return { user, accessToken };
+  }
+  async verifyPassword(password: string, hashedPassword: string) {
+    const isPasswordMatching = compareSync(password, hashedPassword);
 
-  //     const accessToken = await this.signToken(user.id, user.email);
-
-  //     return { user, accessToken };
-  //   }
-  //   async verifyPassword(password: string, hashedPassword: string) {
-  //     const isPasswordMatching = compareSync(password, hashedPassword);
-
-  //     if (!isPasswordMatching) {
-  //       throw new HttpException(
-  //         'The username/email and password combination provided was incorrect.',
-  //         HttpStatus.UNAUTHORIZED,
-  //       );
-  //     }
-  //   }
+    if (!isPasswordMatching) {
+      throw new HttpException(
+        'The username/email and password combination provided was incorrect.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
 
   //   async getAllUser() {
   //     return await this.usersService.findAll();
@@ -124,18 +105,18 @@ export class AuthService {
   //       status: HttpStatus.OK,
   //     };
   //   }
-  //   async signToken(id: number, email: string): Promise<string> {
-  //     const payload = {
-  //       sub: id,
-  //       email,
-  //     };
-  //     const secret = this.configService.getOrThrow('JWT_SECRET');
+  async signToken(id: number, email: string): Promise<string> {
+    const payload = {
+      sub: id,
+      email,
+    };
+    const secret = this.configService.getOrThrow('JWT_SECRET');
 
-  //     const token = await this.jwtService.signAsync(payload, {
-  //       expiresIn: 604800,
-  //       secret: secret,
-  //     });
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: 604800,
+      secret: secret,
+    });
 
-  //     return token;
-  //   }
+    return token;
+  }
 }
