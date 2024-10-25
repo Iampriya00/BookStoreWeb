@@ -32,4 +32,10 @@ export class CreateUserDto {
 
   @IsEnum(Role)
   role?: Role;
+
+  @IsString()
+  resetToken?: string;
+
+  @IsString()
+  resetTokenTime?: string;
 }

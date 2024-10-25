@@ -7,6 +7,8 @@ import { compareSync, hashSync } from 'bcryptjs';
 import { Role } from '@/enums/role.enum';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { PasswordChangeDto } from './dto/passwordChange.dto';
 
 @Injectable()
 export class AuthService {
@@ -80,31 +82,31 @@ export class AuthService {
     }
   }
 
-  //   async getAllUser() {
-  //     return await this.usersService.findAll();
-  //   }
+  async getAllUser() {
+    return await this.usersService.findAll();
+  }
 
-  //   async updateProfile(id: number, newData: UpdateProfileDto) {
-  //     return await this.usersService.update(id, newData);
-  //   }
-  //   async removeUser(id: number) {
-  //     return await this.usersService.remove(id);
-  //   }
-  //   async changePassword(email: string, changePasswordDto: ChangePasswordDto) {
-  //     const user = await this.usersService.findByEmail(email);
+  async updateProfile(id: number, newData: UpdateProfileDto) {
+    return await this.usersService.update(id, newData);
+  }
+  async removeUser(id: number) {
+    return await this.usersService.remove(id);
+  }
+  async changePassword(email: string, changePasswordDto: PasswordChangeDto) {
+    const user = await this.usersService.findByEmail(email);
 
-  //     await this.verifyPassword(changePasswordDto.oldPassword, user.password);
+    await this.verifyPassword(changePasswordDto.oldPassword, user.password);
 
-  //     const password = hashSync(changePasswordDto.newPassword);
+    const password = hashSync(changePasswordDto.newPassword);
 
-  //     await this.usersService.update(user.id, {
-  //       password,
-  //     });
-  //     return {
-  //       message: 'Password changed successfully!',
-  //       status: HttpStatus.OK,
-  //     };
-  //   }
+    await this.usersService.update(user.id, {
+      password,
+    });
+    return {
+      message: 'Password changed successfully!',
+      status: HttpStatus.OK,
+    };
+  }
   async signToken(id: number, email: string): Promise<string> {
     const payload = {
       sub: id,

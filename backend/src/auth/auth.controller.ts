@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -14,6 +16,9 @@ import { LocalAuthGuard } from './guard/local.guard';
 import { LoginDto } from './dto/login.dto';
 import { User } from '@/users/entities/user.entity';
 import { JwtGuard } from './guard/jwt.guard';
+import { GetUser } from '@/decorators/getUser.decorator';
+import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { PasswordChangeDto } from './dto/passwordChange.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -43,45 +48,45 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(JwtGuard)
   @Get('getUser')
-  async getUser() {
-    return 'user';
+  async getUser(@GetUser() user: User) {
+    return user;
   }
 
-  //   @HttpCode(200)
-  //   @Get('getAllUser')
-  //   async getAllUser() {
-  //     return await this.authService.getAllUser();
-  //   }
+  @HttpCode(200)
+  @Get('getAllUser')
+  async getAllUser() {
+    return await this.authService.getAllUser();
+  }
 
-  //   @HttpCode(200)
-  //   @ApiBearerAuth()
-  //   @UseGuards(JwtGuard)
-  //   @Patch('update-profile')
-  //   async updateProfile(
-  //     @GetUser('id') id: number,
-  //     @Body() updateProfileDto: UpdateProfileDto,
-  //   ) {
-  //     return await this.authService.updateProfile(id, updateProfileDto);
-  //   }
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @Patch('update-profile')
+  async updateProfile(
+    @GetUser('id') id: number,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return await this.authService.updateProfile(id, updateProfileDto);
+  }
 
-  //   @HttpCode(200)
-  //   @ApiBearerAuth()
-  //   @UseGuards(JwtGuard)
-  //   @Delete('remove-user')
-  //   async remove(@GetUser('id') id: number) {
-  //     await this.authService.removeUser(id);
-  //   }
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @Delete('remove-user')
+  async remove(@GetUser('id') id: number) {
+    await this.authService.removeUser(id);
+  }
 
-  //   @HttpCode(200)
-  //   @ApiBearerAuth()
-  //   @UseGuards(JwtGuard)
-  //   @Post('change-password')
-  //   async changePassword(
-  //     @GetUser('email') email: string,
-  //     @Body() changePasswordDto: ChangePasswordDto,
-  //   ) {
-  //     return await this.authService.changePassword(email, changePasswordDto);
-  //   }
+  @HttpCode(200)
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
+  @Post('change-password')
+  async changePassword(
+    @GetUser('email') email: string,
+    @Body() changePasswordDto: PasswordChangeDto,
+  ) {
+    return await this.authService.changePassword(email, changePasswordDto);
+  }
   // @HttpCode(200)
   // @Post('forgot-password')
   // async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
